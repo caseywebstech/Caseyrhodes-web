@@ -325,7 +325,7 @@
 </div>
 
 <!-- Audio Element -->
-<audio id="bgMusic" loop></audio>
+<audio id="bgMusic" loop autoplay></audio>
 
 <a href="https://wa.me/+254704472907" class="fixed top-5 left-5 z-20 flex items-center space-x-2 text-sm text-gray-400 hover:text-gray-300 transition-colors duration-300 group" title="Back to main website">
     <i class="fas fa-chevron-left transform group-hover:-translate-x-0.5 transition-transform duration-150"></i>
@@ -398,7 +398,105 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
 <script>
-    // Create stars
+    // ============ AUTO-PLAY MUSIC ON LOAD ============
+    const songs = [
+        'https://files.catbox.moe/x31ls3.mp3',
+        'https://files.catbox.moe/jydlzs.mp3',
+        'https://files.catbox.moe/2cbngz.mp3'
+    ];
+
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let isMusicPlaying = false;
+
+    // Function to start music automatically
+    function startAutoPlayMusic() {
+        // First, try to play immediately (might not work due to browser restrictions)
+        tryAutoPlay();
+        
+        // Also set up interaction listeners as fallback
+        setupInteractionListeners();
+    }
+
+    function tryAutoPlay() {
+        const randomSong = songs[Math.floor(Math.random() * songs.length)];
+        bgMusic.src = randomSong;
+        bgMusic.volume = 0.3;
+        
+        // Try to play immediately
+        const playPromise = bgMusic.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Successfully started playing
+                isMusicPlaying = true;
+                musicBtn.classList.add('playing');
+                musicBtn.textContent = '⏸️';
+                console.log('Music started playing automatically');
+            }).catch(error => {
+                // Auto-play was prevented
+                console.log('Auto-play prevented, waiting for user interaction:', error);
+                // Show a subtle visual cue that music is ready
+                musicBtn.style.animation = 'pulse-music 1.5s ease-in-out infinite';
+            });
+        }
+    }
+
+    function setupInteractionListeners() {
+        // Start music on any user interaction
+        const startMusicOnInteraction = () => {
+            if (!isMusicPlaying && bgMusic.src) {
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicBtn.classList.add('playing');
+                    musicBtn.textContent = '⏸️';
+                    console.log('Music started on user interaction');
+                }).catch(err => {
+                    console.log('Failed to start music:', err);
+                });
+                
+                // Remove listeners after first successful interaction
+                document.removeEventListener('click', startMusicOnInteraction);
+                document.removeEventListener('touchstart', startMusicOnInteraction);
+                document.removeEventListener('keydown', startMusicOnInteraction);
+            }
+        };
+        
+        // Listen for various user interactions
+        document.addEventListener('click', startMusicOnInteraction);
+        document.addEventListener('touchstart', startMusicOnInteraction);
+        document.addEventListener('keydown', startMusicOnInteraction);
+    }
+
+    // Toggle play/pause on button click
+    musicBtn.addEventListener('click', function() {
+        if (isMusicPlaying) {
+            bgMusic.pause();
+            musicBtn.textContent = '🎵';
+            musicBtn.classList.remove('playing');
+            isMusicPlaying = false;
+        } else {
+            if (!bgMusic.src) {
+                // If no song is loaded, load a random one
+                const randomSong = songs[Math.floor(Math.random() * songs.length)];
+                bgMusic.src = randomSong;
+                bgMusic.volume = 0.3;
+            }
+            bgMusic.play();
+            musicBtn.textContent = '⏸️';
+            musicBtn.classList.add('playing');
+            isMusicPlaying = true;
+        }
+    });
+
+    // Play next song when current ends
+    bgMusic.addEventListener('ended', () => {
+        const randomSong = songs[Math.floor(Math.random() * songs.length)];
+        bgMusic.src = randomSong;
+        bgMusic.play();
+    });
+
+    // ============ STAR AND PARTICLE ANIMATIONS ============
     function createStars() {
         const starsContainer = document.getElementById('stars-container');
         const starCount = 100;
@@ -407,14 +505,9 @@
             const star = document.createElement('div');
             star.classList.add('star');
             
-            // Random position
             const x = Math.random() * window.innerWidth;
             const y = Math.random() * window.innerHeight;
-            
-            // Random size (0.5px to 2px)
             const size = Math.random() * 1.5 + 0.5;
-            
-            // Random animation delay
             const delay = Math.random() * 5;
             
             star.style.left = `${x}px`;
@@ -435,10 +528,10 @@
 
     const particleCount = 100;
     const colors = [
-        'rgba(236, 72, 153, 0.7)',   // Pink
-        'rgba(192, 72, 236, 0.7)',   // Purple-pink
-        'rgba(129, 140, 248, 0.7)',  // Indigo
-        'rgba(168, 85, 247, 0.7)'    // Purple
+        'rgba(236, 72, 153, 0.7)',
+        'rgba(192, 72, 236, 0.7)',
+        'rgba(129, 140, 248, 0.7)',
+        'rgba(168, 85, 247, 0.7)'
     ];
 
     class Particle {
@@ -457,7 +550,6 @@
             ctx.beginPath(); 
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); 
             
-            // Create gradient for particles
             const gradient = ctx.createRadialGradient(
                 this.x, this.y, 0,
                 this.x, this.y, this.size
@@ -470,7 +562,6 @@
         }
         
         update() {
-            // Bounce off edges
             if (this.x > canvas.width || this.x < 0) { 
                 this.directionX = -this.directionX; 
             }
@@ -478,11 +569,8 @@
                 this.directionY = -this.directionY; 
             }
             
-            // Move particle
             this.x += this.directionX * this.speed; 
             this.y += this.directionY * this.speed;
-            
-            // Pulsing effect
             this.size = this.originalSize + Math.sin(Date.now() * 0.002) * 0.5;
             
             this.draw();
@@ -504,8 +592,6 @@
 
     function animateParticles() {
         requestAnimationFrame(animateParticles);
-        
-        // Create a fading effect instead of clearing completely
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
@@ -518,15 +604,13 @@
         canvas.width = innerWidth; 
         canvas.height = innerHeight; 
         initParticles();
-        
-        // Recreate stars on resize
         document.getElementById('stars-container').innerHTML = '';
         createStars();
     }
     
     window.addEventListener('resize', resizeCanvas);
     
-    // Initialize everything
+    // Initialize animations
     initParticles();
     createStars();
     animateParticles();
@@ -646,68 +730,6 @@
         new Flower();
     }, 300);
 
-    // ============ MUSIC PLAYER LOGIC ============
-    const songs = [
-        'https://files.catbox.moe/x31ls3.mp3',
-        'https://files.catbox.moe/jydlzs.mp3',
-        'https://files.catbox.moe/2cbngz.mp3'
-    ];
-
-    const bgMusic = document.getElementById('bgMusic');
-    const musicBtn = document.getElementById('musicBtn');
-    let isMusicPlaying = false;
-
-    function playRandomSong() {
-        const randomSong = songs[Math.floor(Math.random() * songs.length)];
-        bgMusic.src = randomSong;
-        bgMusic.volume = 0.3;
-        bgMusic.play().then(() => {
-            isMusicPlaying = true;
-            musicBtn.classList.add('playing');
-            musicBtn.textContent = '⏸️';
-        }).catch(err => {
-            console.log('Autoplay prevented:', err);
-        });
-    }
-
-    musicBtn.addEventListener('click', function() {
-        if (isMusicPlaying) {
-            bgMusic.pause();
-            musicBtn.textContent = '🎵';
-            musicBtn.classList.remove('playing');
-            isMusicPlaying = false;
-        } else {
-            if (!bgMusic.src || bgMusic.ended) {
-                playRandomSong();
-            } else {
-                bgMusic.play();
-                musicBtn.textContent = '⏸️';
-                musicBtn.classList.add('playing');
-                isMusicPlaying = true;
-            }
-        }
-    });
-
-    bgMusic.addEventListener('ended', () => {
-        playRandomSong();
-    });
-
-    // Auto-start music on first interaction
-    let firstInteraction = true;
-    document.addEventListener('click', () => {
-        if (firstInteraction && !isMusicPlaying) {
-            playRandomSong();
-            firstInteraction = false;
-        }
-    }, { once: true });
-
-    document.addEventListener('touchstart', () => {
-        if (firstInteraction && !isMusicPlaying) {
-            playRandomSong();
-            firstInteraction = false;
-        }
-    }, { once: true });
-
     // ============ ORIGINAL PAIRING LOGIC ============
     const generateBtn = document.getElementById("generate-btn");
     const phoneInput = document.getElementById("phone");
@@ -750,7 +772,6 @@
         loadingSection.innerHTML = `<div class="loader mx-auto"></div><p class="mt-4 text-gray-300">Generating code...</p><p class="text-gray-500 text-xs">Please wait.</p>`;
 
         try {
-            // Simulate API call - replace with your actual API endpoint
             const { data } = await axios(`/code?number=${number}`);
             const code = data.code || "Service Unavailable";
             pairingCode.innerText = code;
@@ -758,7 +779,6 @@
             codeSection.classList.remove("hidden");
         } catch (err) {
             console.error("API Error:", err);
-            // Fallback to a random code for demo purposes
             setTimeout(() => {
                 pairingCode.innerText = Math.floor(100000 + Math.random() * 900000);
                 loadingSection.classList.add("hidden");
@@ -774,7 +794,6 @@
             copyBtn.classList.add('copied');
             showToast("Code Copied Successfully!");
             
-            // Reset the button after animation
             setTimeout(() => {
                 copyBtn.classList.remove('copied');
             }, 1500);
@@ -787,6 +806,12 @@
         codeSection.classList.add("hidden");
         formSection.classList.remove("hidden");
         phoneInput.value = "";
+    });
+
+    // ============ START AUTO-PLAY MUSIC ============
+    // Wait for page to load completely, then start music
+    window.addEventListener('load', () => {
+        setTimeout(startAutoPlayMusic, 1000); // Small delay to ensure everything is loaded
     });
 </script>
 

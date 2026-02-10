@@ -296,208 +296,12 @@
             background: rgba(126, 34, 206, 0.3);
             transform: scale(1.1);
         }
-
-        /* Welcome Notification Styles */
-        .welcome-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, rgba(126, 34, 206, 0.95), rgba(192, 132, 252, 0.95));
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(236, 72, 153, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            z-index: 10003;
-            box-shadow: 0 10px 40px rgba(126, 34, 206, 0.4), 
-                        0 0 20px rgba(236, 72, 153, 0.3),
-                        inset 0 0 20px rgba(255, 255, 255, 0.1);
-            transform: translateX(400px);
-            opacity: 0;
-            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 380px;
-            overflow: hidden;
-        }
-
-        .welcome-notification::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                #ec4899 0%, 
-                #c084fc 25%, 
-                #7e22ce 50%, 
-                #c084fc 75%, 
-                #ec4899 100%);
-            animation: shimmer 3s infinite linear;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-
-        .welcome-notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .notification-icon {
-            font-size: 36px;
-            animation: bounce 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.5));
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-8px) rotate(5deg); }
-            50% { transform: translateY(0) rotate(0deg); }
-            75% { transform: translateY(-4px) rotate(-5deg); }
-        }
-
-        .notification-text {
-            flex: 1;
-        }
-
-        .notification-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, #ffffff, #f0abfc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.5px;
-        }
-
-        .notification-message {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.4;
-        }
-
-        .notification-close {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 18px;
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-
-        .notification-close:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
-        }
-
-        .notification-tip {
-            margin-top: 12px;
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            border-left: 3px solid #ec4899;
-        }
-
-        /* Made By Badge */
-        .made-by {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(20, 20, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(236, 72, 153, 0.3);
-            border-radius: 20px;
-            padding: 10px 20px;
-            z-index: 9997;
-            font-size: 12px;
-            letter-spacing: 0.5px;
-            animation: slideInUp 1s ease-out 1.5s both;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .made-by-text {
-            background: linear-gradient(135deg, #ec4899, #c084fc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        @media (max-width: 768px) {
-            .welcome-notification {
-                top: 15px;
-                right: 15px;
-                left: 15px;
-                max-width: none;
-            }
-
-            .made-by {
-                bottom: 15px;
-                right: 15px;
-                font-size: 11px;
-                padding: 8px 16px;
-            }
-
-            .music-player {
-                left: 15px;
-                bottom: 65px;
-            }
-        }
     </style>
 </head>
 <body class="p-4">
 
 <canvas id="particle-canvas"></canvas>
 <div id="stars-container"></div>
-
-<!-- Welcome Notification -->
-<div class="welcome-notification" id="welcomeNotification">
-    <div class="notification-content">
-        <div class="notification-icon">✨</div>
-        <div class="notification-text">
-            <div class="notification-title">Welcome to CASEYRHODES MINI PAIR!</div>
-            <div class="notification-message">Generate WhatsApp pairing codes instantly. Secure, fast, and reliable connection for your devices.</div>
-            <div class="notification-tip">
-                <i class="fas fa-lightbulb mr-1"></i> Tip: You can drag the falling flowers!
-            </div>
-        </div>
-        <button class="notification-close" onclick="closeNotification()">×</button>
-    </div>
-</div>
-
-<!-- Made By Badge -->
-<div class="made-by">
-    Made with <span class="text-pink-400">❤️</span> by <span class="made-by-text">Caseyrhodes Tech</span>
-</div>
 
 <!-- Flower Container -->
 <div class="flower-container" id="flowerContainer"></div>
@@ -726,36 +530,6 @@
     initParticles();
     createStars();
     animateParticles();
-
-    // ============ WELCOME NOTIFICATION LOGIC ============
-    function closeNotification() {
-        const notification = document.getElementById('welcomeNotification');
-        notification.classList.remove('show');
-        localStorage.setItem('notificationClosed', 'true');
-    }
-
-    function showNotification() {
-        const notification = document.getElementById('welcomeNotification');
-        notification.classList.add('show');
-    }
-
-    // Check if notification was previously closed
-    window.addEventListener('load', () => {
-        const notificationClosed = localStorage.getItem('notificationClosed');
-        
-        if (!notificationClosed) {
-            setTimeout(() => {
-                showNotification();
-                
-                // Auto-hide after 8 seconds
-                setTimeout(() => {
-                    if (document.getElementById('welcomeNotification').classList.contains('show')) {
-                        closeNotification();
-                    }
-                }, 8000);
-            }, 1500);
-        }
-    });
 
     // ============ FLOWER ANIMATION LOGIC ============
     let selectedFlower = '🌸';
@@ -1013,13 +787,6 @@
         codeSection.classList.add("hidden");
         formSection.classList.remove("hidden");
         phoneInput.value = "";
-    });
-
-    // Add click outside to close flower menu
-    document.addEventListener('click', (e) => {
-        if (!flowerSelector.contains(e.target) && !flowerMenu.contains(e.target)) {
-            flowerMenu.classList.remove('active');
-        }
     });
 </script>
 
